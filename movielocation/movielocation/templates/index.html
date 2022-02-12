@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SFMovies</title>
+    <style>
+        .map {
+            in-height: 580px;
+            margin: 35px;
+            border: 2px solid #1d8b85;
+            border-radius: 6px;
+            padding: 2px 5px;
+            display: none;
+        }
+
+        .map.show {
+            display: block;
+        }
+
+        iframe {
+            width: 100%;
+            min-height: 580px;
+            height: 100%;
+        }
+
+        h1 {
+            font-size: 48px;
+            text-align: center;
+        }
+
+        .font-size-twenty {
+            font-size: 20px;
+        }
+
+        .form-style {
+            text-align: center;
+            font-size: 30px;
+        }
+
+
+
+    </style>
+    <script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">
+    </script>
+
+    <script src=
+"https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js">
+    </script>
+
+    <link href=
+"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"
+        rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>Welcome to Movie World</h1>
+    <form id="search" onsubmit="handleSubmit(event)" class="form-style" >
+        <label for="movie">Search movie: </label>
+        <input name="movie" type="text" id="movie" class="font-size-twenty">
+        <button type="buttton" class="font-size-twenty">OK</button>
+    </form>
+
+    <div id="map" class="map">
+        <iframe id="output_iframe1"></iframe>
+    </div>
+    <script>
+  $( function() {
+    var availableMovies = [
+        {% for movie in movies %}
+            "{{movie}}",
+        {% endfor %}
+    ];
+    $( "#movie" ).autocomplete({
+      source: availableMovies
+    });
+
+  } );
+
+    function submitForm(movieName) {
+        var url = '/locations/?movie='+movieName
+        fetch(url).then(response => {
+            if(!response.ok) {
+                throw new Error('Error: '+response.status)
+            }
+            return response.text()
+        }).then(html => {
+            console.log(html)
+            document.getElementById('output_iframe1').src = "data:text/html;charset=utf-8," + escape(html);
+            document.querySelector('.map').classList.add('show')
+        })
+    }
+
+
+
+
+  function handleSubmit(event){
+
+      event.preventDefault();
+      event.stopPropagation();
+      var movieName = $('#search').find('input[name="movie"]').val()
+      submitForm(movieName)
+  }
+  </script>
+</body>
+</html>
