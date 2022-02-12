@@ -1,18 +1,22 @@
-from geopy.geocoders import Nominatim
-from geopy import Point
-import requests
-import pandas as pd
-import folium
-from folium.plugins import MarkerCluster
-from .constants import *
 import logging
+
+import folium
+import pandas as pd
+import requests
+from folium.plugins import MarkerCluster
+from geopy import Point
+from geopy.geocoders import Nominatim
+
+from .constants import *
 
 logger = logging.getLogger(__name__)
 
 
 class MoviesData:
     def __init__(self):
-        self.data = pd.read_csv("movielocation/data/Film_Locations_in_San_Francisco.csv")
+        self.data = pd.read_csv(
+            "movielocation/data/Film_Locations_in_San_Francisco.csv"
+        )
 
 
 class GeoCode:
@@ -25,9 +29,7 @@ class GeoCode:
             details = self.geo_locator.geocode(address)
             point_coordinates = details.point
         except Exception as e:
-            logger.critical(
-                "Exception in get_coordinates_point %s" % str(e)
-            )
+            logger.critical("Exception in get_coordinates_point %s" % str(e))
 
         return point_coordinates
 
@@ -45,9 +47,7 @@ def get_movie_details(movie):
             )
 
     except Exception as e:
-        logger.critical(
-            "Exception in get_movie_details %s" % str(e)
-        )
+        logger.critical("Exception in get_movie_details %s" % str(e))
 
     return response
 
@@ -82,15 +82,13 @@ def plot_map(locations):
         marker_cluster = MarkerCluster().add_to(m)
         for i, r in location_df.iterrows():
             location = (r["latitude"], r["longitude"])
-            folium.Marker(location=location, popup=r["address"], tooltip=r["address"]).add_to(
-                marker_cluster
-            )
+            folium.Marker(
+                location=location, popup=r["address"], tooltip=r["address"]
+            ).add_to(marker_cluster)
         m.save(map_filename)
         map_plotted = True
     except Exception as e:
-        logger.critical(
-            "Exception in plot_map %s" % str(e)
-        )
+        logger.critical("Exception in plot_map %s" % str(e))
 
     return map_plotted
 
@@ -99,4 +97,3 @@ def get_and_plot_locations(movie):
     locations = get_locations(movie)
     is_ready = plot_map(locations)
     return map_filename if is_ready else ""
-
