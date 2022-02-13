@@ -13,10 +13,13 @@ Python3
 1. Clone repo
 2. Create a virtualenv and install requirements
    ```
-    pip install requirements.txt
+    pip install -r requirements.txt
    ```
 3. Run server
    ```commandline
     python manage.py runserver
    ```
 4. Open the server link on browser and go on and look up any movie! This will return the locations the movie has been shot in San Franscisco.
+
+
+**Hosted on** [Link](http://shubratha.pythonanywhere.com)

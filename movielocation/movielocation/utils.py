@@ -53,8 +53,35 @@ def get_movie_details(movie):
 
 
 def get_movie_details_from_df(movie):
-    # TOdO: get title, lat, long details from df, use this instead of get_locations
-    data = MoviesData().data["Title"].unique()
+    data = MoviesData().data
+    df = data[(data.Title == movie)]
+    movie_cols = df[["Locations", "Title"]]
+    locations = []
+    for index, row in movie_cols.iterrows():
+        address = row["Locations"]
+        location = call_geocode(address)
+        if location:
+            data = {
+                "address": address,
+                "latitude": location["lat"],
+                "longitude": location["lng"],
+            }
+            locations.append(data)
+    return locations
+
+
+def call_geocode(movie):
+    api_key = os.environ.get("API_KEY")
+    url = geocode_url % (movie, api_key)
+    location = {}
+    try:
+        resp = requests.get(url)
+        resp = resp.json()
+        location = resp["results"][0]["geometry"]["location"]
+    except Exception as e:
+        logger.critical("Exception in get_movie_details %s" % str(e))
+
+    return location
 
 
 def get_locations(movie):
